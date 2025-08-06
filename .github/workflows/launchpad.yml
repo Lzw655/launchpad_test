@@ -1,0 +1,73 @@
+# Copyright 2022 Espressif Systems (Shanghai) PTE LTD
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This workflow build examples, store the artifacts and deploy them to github pages.
+# Generates the launchpad configuration file that can be used with the url.
+
+name: "Build products and deploy launchpad"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # delete-old-artifacts:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Delete old artifacts
+  #       uses: geekyeggo/delete-artifact@v2
+  #       with:
+  #         name: build-images-* # Delete all artifacts with name starting with build-images-
+
+  deploy:
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      - name: generate launchpad config
+        run: |
+          mkdir -p images/
+          cp tools/launchpad.toml images/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: images/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
