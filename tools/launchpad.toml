@@ -1,7 +1,11 @@
 esp_toml_version = 1.0
 firmware_images_url = "https://dl.espressif.com/AE/esp-brookesia/"
 
-supported_apps = ["speaker_0_12_0_ctm_echoear_1_2", "echoear_1_2_test_0_12_0"]
+supported_apps = [
+    "speaker_0_12_2_ctm_echoear_1_2",
+    "speaker_0_12_0_ctm_echoear_1_2",
+    "echoear_1_2_test_0_12_0"
+]
 
 [speaker_0_12_2_ctm_echoear_1_2]
 chipsets = ["ESP32-S3"]
